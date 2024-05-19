@@ -1,0 +1,403 @@
+options:
+    p: &3BombLobbers &8»
+command /takım [<text>]:
+    trigger:
+        if arg-1 isn't set:
+            open chest with 1 rows named "&8Bir takım seç" to player
+            wait a tick
+            format slot 0 of player with cyan wool named "&9Mavi - &7(&7%size of {Mavi.Takım::*}%&7/&74&7)" with lore "||&6Oyuncular:||&71.Oyuncu||&72.Oyuncu||&73.Oyuncu||&74.Oyuncu||||&eTakıma katılmak için tıklayın." to close then run [execute player command "takım mavi"]
+            format slot 1 of player with red wool named "&cKırmızı - &7(&7%size of {Kırmızı.Takım::*}%&7/&74&7)" with lore "||&6Oyuncular:||&71.Oyuncu||&72.Oyuncu||&73.Oyuncu||&74.Oyuncu||||&eTakıma katılmak için tıklayın." to close then run [execute player command "takım kırmızı"]
+            
+        arg-1 is "kırmızı":
+            play raw sound "random.levelup" at {Kırmızı.Takım::%player%} with pitch 1 volume 10
+            {Kırmızı.Takım::%player%} isn't set:
+                {Mavi.Takım::%player%} isn't set:
+                    size of {Kırmızı.Takım::*} < 1:
+                        set {Kırmızı.Takım::%player%} to player
+                        send "{@p} &cKırmızı &atakıma katıldın. &7(&7%size of {Kırmızı.Takım::*}%&7/&74&7)"
+                        size of {Kırmızı.Takım::*} is 1:
+                            size of {Mavi.Takım::*} is 1:
+                                loop {Kırmızı.Takım::*}:
+                                    teleport loop-value to {kırmızı.loc}
+                                loop {Mavi.Takım::*}:
+                                    teleport loop-value to {mavi.loc}
+                                    execute console command "blbaslat"
+                                    execute player command "bomblobbersgiris"
+                                    execute console command "fırlat aç"
+                                    execute console command "sudamage aç"
+                    else:
+                        send "{@p} &cKırmızı takım dolu."
+                else:
+                    delete {Mavi.Takım::%player%}
+                    set {Kırmızı.Takım::%player%} to player
+                    send "{@p} &cKırmızı &atakıma katıldın. &7(&7%size of {Kırmızı.Takım::*}%&7/&74&7)"
+            else:
+                send "{@p} &cZaten kırmızı takımdasın."
+        arg-1 is "mavi":
+            play raw sound "random.levelup" at {Mavi.Takım::%player%} with pitch 1 volume 10
+            {Mavi.Takım::%player%} isn't set:
+                {Kırmızı.Takım::%player%} isn't set:
+                    size of {Mavi.Takım::*} < 1:
+                        set {Mavi.Takım::%player%} to player
+                        send "{@p} &9Mavi &atakıma katıldın. &8(&7%size of {Mavi.Takım::*}%&8/&74&8)"
+                        size of {Mavi.Takım::*} is 1:
+                            size of {Kırmızı.Takım::*} is 1:
+                                loop {Mavi.Takım::*}:
+                                    teleport loop-value to {mavi.loc}
+                                loop {Kırmızı.Takım::*}:
+                                    teleport loop-value to {kırmızı.loc}
+                                    execute player command "bomblobbersgiris"
+                                    execute console command "fırlat aç"
+                                    execute console command "sudamage aç"
+                    else:
+                        send "{@p} &9Mavi &ctakım dolu."
+                else:
+                    delete {Kırmızı.Takım::%player%}
+                    set {Mavi.Takım::%player%} to player
+                    send "{@p} &9Mavi &atakıma katıldın. &8(&7%size of {Mavi.Takım::*}%&8/&74&8)"
+            else:
+                send "{@p} &cZaten &9mavi &ctakımdasın."
+                
+        arg-1 is "maviloc":
+            player has permission "mavi.loc":
+                set {mavi.loc} to player's location
+        arg-1 is "kırmızıloc":
+            player has permission "kırmızı.loc":
+                set {kırmızı.loc} to player's location
+                
+command /Kırmızıboz:
+    trigger:
+        delete {Kırmızı.Takım::%player%}     
+        
+command /Maviboz:
+    trigger:
+        delete {Mavi.Takım::%player%}
+                
+damage of player:
+    {Kırmızı.Takım::%attacker%} is set:
+        {Kırmızı.Takım::%victim%} is set:
+            cancel event
+    {Mavi.Takım::%attacker%} is set:
+        {Mavi.Takım::%victim%} is set:
+            cancel event
+            
+command /ayrıl:
+    trigger:
+        delete {Kırmızı.Takım::*}
+        delete {Mavi.Takım::*}
+        
+command /maviışınla:
+    trigger:
+        world is "BombLobbersBL"
+        teleport {Mavi.Takım::%player%} to {mavi.loc}
+        
+command /mavispawn:
+    permission: mavi.spawn
+    trigger:
+        set {mavi.loc} to location of player
+        send "&3BombLobbers &9Mavi &aSpawn Belirlendi."        
+        
+command /kırmızıışınla:
+    trigger:
+        world is "BombLobbersBL"
+        teleport {Kırmızı.Takım::%player%} to {kırmızı.loc}
+        
+command /kırmızıspawn:
+    permission: kırmızı.spawn
+    trigger:
+        set {kırmızı.loc} to location of player
+        send "&3BombLobbers &cKırmızı &aSpawn Belirlendi." 
+        
+command /blışınla:
+    trigger:
+        world is "ArcadeLobi"
+        teleport player to {bl.loc}
+        
+command /blspawn:
+    permission: bl.spawn
+    trigger:
+        set {bl.loc} to location of player
+        send "&3BombLobbersBL &aSpawn Belirlendi."
+        
+command /tntver:
+    trigger:
+        give 1 TNT named "&cTNT" to player
+        
+command /fırlat [<text>]:
+    permission: op
+    trigger:
+        send ""
+        
+        arg-1 is "aç":
+            set {tntfırlat.%player%} to true
+        arg-1 is "kapat":
+            set {tntfırlat.%player%} to false
+            
+every 5 seconds:
+    if {oyunbasladi} is true:
+        loop all players:
+            give 1 TNT named "&cTNT" to loop-players
+    
+on rightclick with tnt:
+    world is "BombLobbers"
+    if {tntfırlat.%player%} is true:
+        remove tnt from player
+        shoot a tnt with speed 2
+                
+on walking on water:
+    world is "BombLobbers"
+    if {sudamage.%player%} is true:
+        damage player by 1   
+            
+command /sudamage [<text>]:
+    permission: op
+    trigger:
+        send ""
+        arg-1 is "aç":
+            set {sudamage.%player%} to true
+        arg-1 is "kapat":
+            set {sudamage.%player%} to false
+            
+command /blbaslat:
+	permission: op
+	permission message: &3BombLobbers &8» &cBu komutu kullanmak için iznin yok!
+	trigger:
+		if number of all players is smaller than or equal to 1:
+			delete {oyunbasladi}
+			send "&3BombLobbers &8» &4oyun başlatılamadı, lütfen bu hatayı bildirin."
+		else:
+			set {oyunbasladi} to true
+			clear {sonakalan::*}
+			loop all players:
+				set loop-player's gamemode to survival
+				set {sonakalan::%loop-player%} to loop-player	
+			
+on death of a player:
+	if {oyunbasladi} is true:
+		execute console command "gamemode spectator %player%"
+		send "&3BombLobbers &8» &eÖldüğün için artık izleyici modundasın"
+		if {sonakalan::%player%} is set:
+			delete {sonakalan::%player%}
+			if size of {sonakalan::*} is smaller than or equal to 1:
+				delete {oyunbasladi}
+				loop {sonakalan::*}:
+					send "&6&m-------------------------------------------" to all players
+					send "                                               " to all players
+					send "           &6%loop-value% &eoyunu kazandı!" to all players
+					send "                                               " to all players
+					send "           &c1. &aOyuncu &7[&e{1_First}&7]" to all players
+					send "           &62. &aOyuncu &7[&e{2_second}&7]" to all players
+					send "           &e3. &aOyuncu &7[&e{3_third}&7]" to all players
+					send "                                               " to all players
+					send "&6&m-------------------------------------------" to all players
+					send "%colored prefix of player%%loop-value% &8» &fgg" to all players
+					send players title "&eKAZANAN &f%loop-value%" with subtitle "" for 4 seconds
+					play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10
+					execute console command "fırlat kapat"
+					execute console command "sudamage kapat"
+					execute console command "ayrıl"
+					execute console command "clear *"
+					execute console command "ch heal"
+					
+on join:
+	if {oyunbasladi} is true:
+		wait 1 second
+		execute console command "gamemode spectator %player%"
+		send "&3BombLobbers &8» &aArtık izleyici modundasın."
+	else:
+		set player's gamemode to adventure
+		
+on quit:
+	if {oyunbasladi} is true:
+		if {sonakalan::%player%} is set:
+			delete {sonakalan::%player%}
+			if size of {sonakalan::*} is smaller than or equal to 1:
+				delete {oyunbasladi}
+				loop {sonakalan::*}:
+					send "&6&m-------------------------------------------" to all players
+					send "                                               " to all players
+					send "           &6%loop-value% &eoyunu kazandı!" to all players
+					send "                                               " to all players
+					send "           &c1. &aOyuncu &7[&e{1_First}&7]" to all players
+					send "           &62. &aOyuncu &7[&e{2_second}&7]" to all players
+					send "           &e3. &aOyuncu &7[&e{3_third}&7]" to all players
+					send "                                               " to all players
+					send "&6&m-------------------------------------------" to all players
+					send players title "&eKAZANAN &f%loop-value%" with subtitle "" for 4 seconds
+					play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10					
+					send "%colored prefix of player%%loop-value% &8» &fgg" to all players
+					execute console command "fırlat kapat"
+					execute console command "sudamage kapat"
+					execute console command "ayrıl"
+					execute console command "clear *"
+					execute console command "ch heal"
+					
+command /blbitir:
+    trigger:
+        delete {oyunbasladi}
+        send "&3BombLobbers &8» &cBir yetkili tarafından oyun bitirildi, kazanan olmadı."
+        
+command /blcıkıs:
+    trigger:
+        world is "BombLobbersBL"
+        execute console command "ayrıl"
+        execute player command "hub"
+					
+on command "hub":
+    if {oyunbasladi} is true:
+        world is "BombLobbers"
+        delete {oyunbasladi}
+        loop {sonakalan::*}:
+            send "&3BombLobbers &8» &c%player% &eoyundan çıktı ve elendi!" to all players
+            send "&6&m-------------------------------------------" to all players
+            send "                                               " to all players
+            send "           &6%loop-value% &eoyunu kazandı!" to all players
+            send "                                               " to all players
+            send "           &c1. &aOyuncu &7[&e{1_first&7]" to all players
+            send "           &62. &aOyuncu &7[&e{2_second&7]" to all players
+            send "           &e3. &aOyuncu &7[&e3_third&7]" to all players
+            send "                                               " to all players
+            send "&6&m-------------------------------------------" to all players
+            send players title "&eKAZANAN &f%loop-value%" with subtitle "" for 4 seconds
+            play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10          
+            send "%colored prefix of player%%loop-value% &8» &fgg" to all players
+            execute console command "fırlat kapat"
+            execute console command "sudamage kapat"
+            execute console command "ayrıl"
+            execute console command "clear *"
+            execute console command "ch heal"
+    
+on teleport:
+	if {oyunbasladi} is true:
+		wait 1 second
+		execute console command "gamemode spectator %player%"
+		send "&3BombLobbers &8» &aArtık izleyici modundasın."
+	else:
+		set player's gamemode to adventure	
+		
+death of player:
+    world is "BombLobbers"
+    add 1 to {sayaç.%player%}
+    {sayaç.%player%} is more than or equal to 1:
+        execute console command "%player% gamemode 3" 
+        
+command /BombLobbers:
+    trigger:
+        wait 0.1 second
+        open chest with 4 rows named "&8BombLobbers" to player
+        format slot 12 of player with TNT named "&aBombLobbers" with lore "||&eOynamak için tıklayın." to close then run [execute player command "bomblobbersbl"]
+        format slot 14 of player with Grass named "&aBombLobbers (Harita Seçici)" with lore "&7Burada istediğin||&7haritada oynayabilirsin.||||&eHarita seçmek için tıklayın." to close then run [execute player command "blharita"]
+            
+command /bomblobbersgiris:
+    trigger:
+        wait 3 second
+        send "{@p} &eOyun baslıyor, tnt verilmeye başlıyor!" to {Kırmızı.Takım::*} or {Mavi.Takım::*}
+        wait 0.1 second
+        send "{@p} &eOyunun başlamasına &c5 &esaniye." to {Kırmızı.Takım::*} or {Mavi.Takım::*}
+        play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10
+        wait 1 second
+        send "{@p} &eOyunun başlamasına &c4 &esaniye." to {Kırmızı.Takım::*} or {Mavi.Takım::*}
+        play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10
+        wait 1 second
+        send "{@p} &eOyunun başlamasına &c3 &esaniye." to {Kırmızı.Takım::*} or {Mavi.Takım::*}
+        play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10
+        wait 1 second
+        send "{@p} &eOyunun başlamasına &c2 &esaniye." to {Kırmızı.Takım::*} or {Mavi.Takım::*}
+        play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10
+        wait 1 second
+        send "{@p} &eOyunun başlamasına &c1 &esaniye." to {Kırmızı.Takım::*} or {Mavi.Takım::*}
+        play raw sound "random.orb" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10
+        wait 1 second
+        send "{@p} &eOyun başladı, herkes bol şanslar!" to {Kırmızı.Takım::*} or {Mavi.Takım::*}
+        play raw sound "random.pop" at {Kırmızı.Takım::*} or {Mavi.Takım::*} with pitch 1 volume 10
+        
+command /BombLobbersBL:
+    trigger:
+        play raw sound "mob.endermen.portal" at player with pitch 1 volume 10
+        execute player command "blışınla"
+        wait 2 second
+        send "&3BombLobbers &8» &eOyuncuların takım seçmesi bekleniyor.."
+            
+command /Blharita:
+    trigger:
+        wait 0.1 second
+        open chest with 4 rows named "&8BombLobbers Harita Seçici" to player
+        format slot 10 of player with 2 named "&eKorsan Gemiler" with lore "||&7Kalan Limit: &a2||&7Aktif: &a0||||&eOynamak için tıklayın." to close then run [execute player command "bomblobbersbl"]
+        format slot 31 of player with 401 named "&aRasgele Harita" with lore "||&7Kalan Limit: &a2||||&eOynamak için tıklayın." to close then run [execute player command "bomblobbersbl"]
+        
+command /blayarlar:
+    trigger:
+        open chest with 4 rows named "&8BombLobbers » Ayarlar " to player
+        format slot 11 of player with redstone repeater item named "&aOto GG" with lore "&7Oyunu kazandığında||&7sohbete GG yazar.||||&eAçmak için tıklayın." to close then run [execute player command "blotogg"]
+        
+command /blotogg:
+    trigger:
+        send "&3BombLobbers &8» &eOto GG yakında!"
+        
+options:
+    p: &3BombLobbers &8»
+    
+on first login:
+    set {otogg1.%player%} to false
+
+command /otoogg [<text>]:
+    trigger:
+        if arg 1 is "otoaç":
+            set {otogg1.%player%} to true
+            send "{@p} &eOto GG açıldı."
+        if arg 1 is "otokapat":
+            set {otogg1.%player%} to false
+            send "&3{@p} Oto GG kapatıldı."
+command /otooogg [<text>]:
+    trigger:
+        open chest with 4 rows named "&7Oto GG" to player
+        if {otogg1.%player%} is true:
+            format slot 10 of player with green stained glass pane named "&aOto GG" with lore "||&7Maçı kazandığın zaman GG yazar.||||&7Durum &aAçık" to close then run [execute player command "otoogg otoaç"]
+        if {otogg1.%player%} is false:
+            format slot 10 of player with red stained glass pane named "&cOto GG" with lore "||&7Maçı kazandığın zaman GG yazar.||||&7Durum &cKapalı" to close then run [execute player command "otoogg otoaç"]
+        format slot 22 of player with lever named "&COto GG kapat" with lore "||&7 Oto GG kapatmak için tıklayın.||" to close then run [execute player command "otoogg otokapat"]
+
+on death :
+    if {otogg1.%player%} is true:
+        stop        
+        
+on craft:
+    world is "BombLobbers" or "BombLobbersBL"
+    cancel event
+    send "&3BombLobbers &8» &cEşya craftlayamazsın!"
+
+on break:
+    world is "BombLobbers" or "BombLobbersBL"
+    cancel event
+    send "&3BombLobbers &8» &cBlok kıramazsın!"
+    
+on place:
+    world is "BombLobbers" or "BombLobbersBL"
+    cancel event
+    send "&3BombLobbers &8» &cBlok koyamazsın!"
+    
+on drop:
+    world is "BombLobbers" or "BombLobbersBL"
+    cancel event
+    
+on right click on crafting table:
+    world is "BombLobbers" or "BombLobbersBL"
+    cancel event
+    
+on death of a player:
+    if attacker is a player:   
+        if {Kill::%attacker%} is not set:
+            set {stats.kills::%attacker%} to 0   
+        add 1 to {stats.kills::%attacker%}
+        stop
+        
+command /stats:
+    trigger:
+        send "&b%{stats.kills::%player%}%"
+        send "&4%{stats.deaths::%player%}%"
+
+command /statsreset:
+    permission: stats.console
+    trigger:
+        delete {stats.kills::%player%}
+        delete {stats.deaths::%player%}
